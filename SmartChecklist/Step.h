@@ -18,6 +18,7 @@ public:
 	int get_input();
 	int get_num_ops();
 	void add_op(string option_in, Step * next_in);
+	void do_step();
 
 	void suggestions(); // this is tricky part - based on relevantPart, FlightData(maybe?). 
 private:

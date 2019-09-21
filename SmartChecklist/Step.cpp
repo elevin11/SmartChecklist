@@ -51,3 +51,22 @@ void Step::add_op(string option_in, Step * next_in)
 	nextSteps.push_back(next_in);
 }
 
+void Step::do_step()
+{
+	display();
+
+	int userInput = 0;
+	while (true)
+	{
+		userInput = get_input();
+		if (userInput >= 0 && userInput < get_num_ops())
+		{
+			nextSteps[userInput]->do_step();
+		}
+		else
+		{
+			cout << "Please select one of the given options" << endl;
+		}
+	}
+}
+
