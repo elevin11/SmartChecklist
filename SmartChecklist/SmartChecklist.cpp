@@ -3,28 +3,49 @@
 #include "pch.h"
 #include <iostream>
 
+#include "Checklist.h"
 //#include "Part.h"
 #include "Step.h"
 using namespace std;
 
 int main()
 {
-	//create example step
-	Part leftFil("Left Filange", 123);
-	Part rightFil("Right Filange", 321);
-	string ex_name = "Check Left Filange";
-	string ex_instruct = "Take out left filange and look at it. What condition is it in?";
-	Step example(ex_name, ex_instruct, leftFil);
+	//define example parts
+	vector<string> ex_cond;
+	ex_cond.push_back("GOOD"); //conditionCode = 0
+	ex_cond.push_back("DIRTY"); //conditionCode = 1
+	ex_cond.push_back("BROKEN"); //conditionCode = 2
+	Part leftFil("Left Filange", 123, ex_cond);
+	Part rightFil("Right Filange", 321, ex_cond);
 	
-	//next steps for example
-	Step * next1 = new Step("Clean Filange", "take out a damp rag and wipe the gunk off it", leftFil);
-	Step * next2 = new Step("Replace Filange", "remove filange and put a new one in", leftFil);
-	Step * next3 = new Step("Check Right Filange", "Take out right filange and look at it. What condition is it in?", rightFil);
-	example.add_op("Filange is dirty", next1);
-	example.add_op("Filange is broken", next2);
-	example.add_op("Filange in good condition", next3);
+	//define example steps
+	Step * checkLeft = new Step("Check Left Filange", "Take out left filange and look at it. What condition is it in?", leftFil);
+	Step * cleanFil = new Step("Clean Filange", "Get a damp rag and wipe the gunk off it", leftFil);
+	Step * replaceFil = new Step("Replace Filange", "Remove filange and put a new one in", leftFil);
+	Step * checkRight = new Step("Check Right Filange", "Take out right filange and look at it. What condition is it in?", rightFil);
 
-	example.do_step();
+	checkLeft->add_op("Filange in good condition", checkRight, 0);
+	checkLeft->add_op("Filange is dirty", cleanFil, 1);
+	checkLeft->add_op("Filange is broken", replaceFil, 2);
+
+	cleanFil->add_op("Filange cleaned", nullptr, 0);
+	cleanFil->add_op("No action taken", nullptr, 1);
+
+	replaceFil->add_op("Filange replaced", nullptr, 0);
+	replaceFil->add_op("No action taken", nullptr, 2);
+
+	checkRight->add_op("Filange in good condition", nullptr, 0);
+	checkRight->add_op("Filange is dirty", nullptr, 1);
+	checkRight->add_op("Filange is broken", nullptr, 2);
+
+	//define example checklist
+	Checklist check(checkLeft);
+	check.add_part(&leftFil);
+	check.add_part(&rightFil);
+
+	check.begin();
+	check.show_conditions();
+
 
 }
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
